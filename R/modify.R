@@ -3,6 +3,20 @@
 
 # Internal code to check path
 .check_path <- function(l, path) {
+    if (length(path) < 1) {
+        stop("Path should not be empty")
+    }
+
+    if (sum(path < 1) > 0) {
+        stop("All path should be positive values")
+    }
+    if (sum(as.integer(path) != path) > 0){
+        stop("All path should be integar values.")
+    }
+    if (path[1] != 1) {
+        stop("Path should start with 1")
+    }
+
     if (all(is.numeric(path))) {
         return(path)
     } else if (length(path) == 1 && is.character(path)) {
@@ -108,6 +122,48 @@ insert_model <- function(l, path, model) {
 }
 
 
+
+#' Insert models into apsimx
+#'
+#' @param l the list of apsimx file
+#' @param path If numeric, the path returned by search_path or search_node. If character, the path supported by apsimx
+#' @param models New models
+#' @return The modified list with new value
+#' @export
+#' @examples
+#' wheat <- read_apsimx(system.file("wheat.apsimx", package = "rapsimng"))
+#' replacements <- new_model("Core.Replacements")
+#' wheat_new <- insert_model(wheat, 1, replacements)
+#' replacements_node <- search_path(wheat_new, ".Simulations.Replacements")
+#' replacements_node$path
+#' # Add a cultivar folder under replacements
+#' cultivar_folder <- new_model("PMF.CultivarFolder", "Cultivars")
+#' wheat_new <- insert_model(wheat_new, replacements_node$path, cultivar_folder)
+#' cultivar_folder_node <- search_path(wheat_new,
+#'                                     ".Simulations.Replacements.Cultivars")
+#' cultivar_folder_node$path
+#' # Add an new cultivar
+#' cultivar <- new_model("PMF.Cultivar", "Hartog")
+#' wheat_new <- insert_model(wheat_new, cultivar_folder_node$path, cultivar)
+#' cultivar_node <- search_path(wheat_new,
+#'                              ".Simulations.Replacements.Cultivars.Hartog")
+#' cultivar_node$path
+insert_models <- function(l, path, models) {
+    path <- .check_path(l, path)
+    path <- path[-1]
+    eq <- 'l'
+    for (i in seq(along = path)) {
+        eq <- c(eq, '[["Children"]]', paste0('[[', path[i], ']]'))
+    }
+    eq <- c(eq, '[["Children"]]')
+    eq_str <- paste(eq, collapse = '')
+    #eq_str <- paste0(eq_str, '[[length(', eq_str, ')+1]] <- models')
+    eq_str <- paste0(eq_str, "<- c(", eq_str, ', models)')
+    eval(parse(text=eq_str))
+    return(l)
+}
+
+
 #' append a model into apsimx
 #'
 #' @param l the list of apsimx file
@@ -160,4 +216,74 @@ append_model <- function(l, path, model) {
 
     eval(parse(text=eq_str))
     return(l)
+}
+
+
+#' Set a parameter with a new value
+#'
+#' @param l the list of apsimx file
+#' @param parameter the name of parameter with APSIM NG specification
+#' @param value the new value
+#'
+#' @return A list with replaced value
+#' @export
+#'
+#' @examples
+#'  wheat <- read_apsimx(system.file("Wheat.json", package = "rapsimng"))
+#'  new_wheat <- set_parameter_value(wheat,
+#'   "[Structure].BranchingRate.PotentialBranchingRate.Reproductive.Zero.FixedValue",
+#'   1)
+#' new_wheat2 <- search_path(new_wheat,
+#'     "[Structure].BranchingRate.PotentialBranchingRate.Reproductive.Zero")
+#' new_wheat2$node$FixedValue
+#'
+#' new_wheat <- set_parameter_value(
+#'     wheat,
+#'     "[Structure].HeightModel.WaterStress.XYPairs.Y",
+#'     "0.1,1.1")
+#' new_wheat2 <- search_path(new_wheat,
+#'     "[Structure].HeightModel.WaterStress.XYPairs")
+#' new_wheat2$node$Y
+set_parameter_value <- function(l, parameter, value) {
+    if (length(parameter) != 1) {
+        stop("Require parameter has length 1")
+    }
+    if (length(value) != 1) {
+        stop("Require value has length 1")
+    }
+    if (!is.character(parameter)) {
+        stop("Require parameter is character")
+    }
+    if (grepl("\\.FixedValue$", parameter)) {
+        p_path <- gsub("\\.FixedValue$", "", parameter)
+        p_node <- search_path(l, p_path)
+        if (length(p_node) == 0) {
+            stop('Parameter (', parameter, ') is not found')
+        }
+        p_node$node$FixedValue <- value
+    } else if (grepl("\\.XYPairs\\.(X|Y)$", parameter)) {
+        p_path <- gsub("\\.(X|Y)$", "", parameter)
+        p_node <- search_path(l, p_path)
+        if (length(p_node) == 0) {
+            stop('Parameter (', parameter, ') is not found')
+        }
+        new_values <- strsplit(value, ",| ")[[1]]
+        if (grepl("\\.X$", parameter)) {
+            if (length(new_values) != length(p_node$node$X)) {
+                warning("New value doesn't match the length for old values. ",
+                        "Expect: ", paste(p_node$node$X, collapse = ","))
+            }
+            p_node$node$X <- as.list(new_values)
+        } else if (grepl("\\.Y$", parameter)) {
+            if (length(new_values) != length(p_node$node$Y)) {
+                warning("New value doesn't match the length for old values. ",
+                        "Expect: ", paste(p_node$node$Y, collapse = ","))
+            }
+            p_node$node$Y <- as.list(new_values)
+        }
+    } else  {
+        stop("Cannot replace the parameter value for ", parameter)
+    }
+    l <- replace_model(l, p_node$path, p_node$node)
+    l
 }

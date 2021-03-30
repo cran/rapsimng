@@ -34,6 +34,7 @@ Several functions are designed to modify the apsimx file, including
 ```{r read-apsimx}
 library(rapsimng)
 wheat <- read_apsimx(system.file("Wheat.json", package = "rapsimng"))
+#wheat <- read_apsimx("inst/Wheat.json")
 ```
 
 ## Modify existing model

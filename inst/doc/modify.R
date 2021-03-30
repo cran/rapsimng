@@ -11,6 +11,7 @@ suppressPackageStartupMessages(library(magrittr))
 ## ----read-apsimx--------------------------------------------------------------
 library(rapsimng)
 wheat <- read_apsimx(system.file("Wheat.json", package = "rapsimng"))
+#wheat <- read_apsimx("inst/Wheat.json")
 
 ## -----------------------------------------------------------------------------
 # Find the ThermalTime model 
