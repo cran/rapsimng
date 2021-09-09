@@ -23,15 +23,15 @@ get_cultivar <- function(l, alias = TRUE) {
         cul_name <- culs[[i]]$node$Name
         cmds <- unlist(culs[[i]]$node$Command)
         k <- k + 1
-        res[[k]] <- tibble::tibble(name = cul_name, cmd = cmds)
+        res[[k]] <- data.frame(name = cul_name, cmd = cmds, stringsAsFactors = FALSE)
         # for alias
         if (alias == TRUE && length(culs[[i]]$node$Children) > 0 ){
             aliases <- search_node(culs[[i]]$node, `$type` = 'Models.Core.Alias, Models', all = TRUE)
             if (length(aliases) > 0) {
                 for (j in seq(along = aliases)) {
                     k <- k + 1
-                    res[[k]] <- tibble::tibble(name = aliases[[j]]$node$Name,
-                                               cmd = cmds)
+                    res[[k]] <- data.frame(name = aliases[[j]]$node$Name,
+                                               cmd = cmds, stringsAsFactors = FALSE)
                 }
             }
         }
@@ -39,9 +39,12 @@ get_cultivar <- function(l, alias = TRUE) {
     if (length(res) == 0) {
         stop("No cultivars found")
     }
-    r <- dplyr::bind_rows(res) %>%
-        dplyr::filter(grepl("=", .data$cmd)) %>%
-        tidyr::separate(.data$cmd, into = c("parameter", "value"), sep = " *= *")
+    r <- do.call(rbind, res)
+    r <- r[grepl("=", r$cmd),]
+    p_v <- strsplit(r$cmd, split = " *= *")
+    r$parameter <- unlist(lapply(p_v, function(x) x[1]))
+    r$value <- unlist(lapply(p_v, function(x) x[2]))
+    r$cmd <- NULL
     r
 }
 
@@ -93,16 +96,18 @@ update_cultivar <- function(l, df) {
         stop("'value' column is required in the data frame 'df'.")
     }
 
-    # Check the replacement node (assume the apsimx file)
-    replacements_node <- search_path(l, "[Replacements]")
 
-    if (length(replacements_node) == 0) {
-        replacements <- new_model("Core.Replacements")
-        l <- insert_model(l, 1, replacements)
-    }
-    replacements_node <- search_path(l, "[Replacements]")
     cultivar_node <- search_path(l, "[Cultivars]")
     if (length(cultivar_node) == 0) {
+        # Check the replacement node (assume the apsimx file)
+        replacements_node <- search_path(l, "[Replacements]")
+
+        if (length(replacements_node) == 0) {
+            replacements <- new_model("Core.Replacements")
+            l <- insert_model(l, 1, replacements)
+        }
+        replacements_node <- search_path(l, "[Replacements]")
+
         cultivar_model <- new_model("PMF.CultivarFolder", "Cultivars")
         l <- insert_model(l, replacements_node$path, cultivar_model)
     }

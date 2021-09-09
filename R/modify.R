@@ -261,28 +261,39 @@ set_parameter_value <- function(l, parameter, value) {
             stop('Parameter (', parameter, ') is not found')
         }
         p_node$node$FixedValue <- value
-    } else if (grepl("\\.XYPairs\\.(X|Y)$", parameter)) {
+    } else if (grepl("\\.(X|Y)$", parameter)) {
         p_path <- gsub("\\.(X|Y)$", "", parameter)
         p_node <- search_path(l, p_path)
         if (length(p_node) == 0) {
             stop('Parameter (', parameter, ') is not found')
         }
-        new_values <- strsplit(value, ",| ")[[1]]
+        new_values <- strsplit(value, " *, *")[[1]]
+
         if (grepl("\\.X$", parameter)) {
             if (length(new_values) != length(p_node$node$X)) {
-                warning("New value doesn't match the length for old values. ",
+                stop("New value doesn't match the length for old values. ",
                         "Expect: ", paste(p_node$node$X, collapse = ","))
             }
             p_node$node$X <- as.list(new_values)
         } else if (grepl("\\.Y$", parameter)) {
             if (length(new_values) != length(p_node$node$Y)) {
-                warning("New value doesn't match the length for old values. ",
+                stop("New value doesn't match the length for old values. ",
                         "Expect: ", paste(p_node$node$Y, collapse = ","))
             }
             p_node$node$Y <- as.list(new_values)
         }
     } else  {
-        stop("Cannot replace the parameter value for ", parameter)
+        # for node with special value
+        p_path <- gsub("^(.+)\\.([a-zA-Z0-9]+)$", "\\1", parameter)
+        p_name <- gsub("^(.+)\\.([a-zA-Z0-9]+)$", "\\2", parameter)
+        if (nchar(p_name) == 0 || nchar(p_name) == nchar(parameter)) {
+            stop("Parameter name is not found")
+        }
+        p_node <- search_path(l, p_path)
+        if (length(p_node) == 0) {
+            stop('Parameter (', parameter, ') is not found')
+        }
+        p_node$node[[p_name]] <- value
     }
     l <- replace_model(l, p_node$path, p_node$node)
     l
