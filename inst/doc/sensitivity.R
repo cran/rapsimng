@@ -15,7 +15,7 @@ phyllochron_para <- tibble(parameter = "[Phenology].Phyllochron.BasePhyllochron.
 head(phyllochron_para)
 
 ## -----------------------------------------------------------------------------
-template <- read_apsimx(system.file("wheat.apsimx", package = "rapsimng"))
+template <- read_apsimx(system.file("extdata/wheat.apsimx", package = "rapsimng"))
 
 ## -----------------------------------------------------------------------------
 template <- update_cultivar(template, phyllochron_para)

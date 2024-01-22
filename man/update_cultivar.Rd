@@ -4,12 +4,25 @@
 \alias{update_cultivar}
 \title{Title Update the cultivar parameters}
 \usage{
-update_cultivar(l, df)
+update_cultivar(
+  l,
+  df,
+  add = TRUE,
+  use_folder = TRUE,
+  cultivar_folder = "Cultivars"
+)
 }
 \arguments{
 \item{l}{The list of apsimx file}
 
 \item{df}{A data frame for new parameters with three columns, i.e. name, parameter and value.}
+
+\item{add}{Whether to add extra nodes (e.g. replacements, Cultivars folder
+and new cultivar)}
+
+\item{use_folder}{use cultivar folder to add new cultivars}
+
+\item{cultivar_folder}{folder name for cultivars}
 }
 \value{
 The modified apsimx file
@@ -21,7 +34,7 @@ The existing cultivar parameters are updated. New cultivar
 is created.
 }
 \examples{
-wheat <- read_apsimx(system.file("wheat.apsimx", package = "rapsimng"))
+wheat <- read_apsimx(system.file("extdata/wheat.apsimx", package = "rapsimng"))
 # Update cultivars
 df <- data.frame(name = rep("Hartog", 3),
                  parameter = c("[Phenology].MinimumLeafNumber.FixedValue",

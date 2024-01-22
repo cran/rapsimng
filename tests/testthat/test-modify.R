@@ -1,6 +1,6 @@
 suppressPackageStartupMessages(library(testthat))
 test_that("cultivar", {
-    wheat <- read_apsimx(system.file("Wheat.json", package = "rapsimng"))
+    wheat <- read_apsimx(system.file("extdata/Wheat.json", package = "rapsimng"))
 
 
 
@@ -44,6 +44,10 @@ test_that("cultivar", {
                                          "[Structure].HeightModel.WaterStress.XYPairs.X", "0.4,1.1,2")
 
     })
+
+    # Disable models
+    new_wheat <- disable_models(wheat, c("[Structure].HeightModel", "[Structure].BranchingRate"))
+
 
 
     new_wheat <- set_parameter_value(
@@ -109,9 +113,11 @@ test_that("cultivar", {
     expect_equal(cultivar$Name, "test")
     expect_equal(cultivar$`$type`, "Models.PMF.Cultivar, Models")
 
+
+
     # Insert a model
     # Add a new replacements
-    wheat <- read_apsimx(system.file("wheat.apsimx", package = "rapsimng"))
+    wheat <- read_apsimx(system.file("extdata/wheat.apsimx", package = "rapsimng"))
     replacements <- new_model("Core.Replacements")
     wheat_replacement <- insert_model(wheat, 1, replacements)
     replacements_node <- search_path(wheat_replacement, ".Simulations.Replacements")

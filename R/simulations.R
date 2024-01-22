@@ -92,7 +92,7 @@ get_factors <- function(l) {
 #' @return A list with Factor as name and Levels as values
 #' @export
 #' @examples
-#' wheat <- read_apsimx(system.file("wheat.apsimx", package = "rapsimng"))
+#' wheat <- read_apsimx(system.file("extdata/wheat.apsimx", package = "rapsimng"))
 #' permutation <- search_path(wheat, path = "[Factors].Permutation")
 #' get_simulations(permutation$node)
 get_simulations <- function(l) {
@@ -115,7 +115,7 @@ get_simulations <- function(l) {
 #' @return A new list with removed simulations.
 #' @export
 #' @examples
-#' wheat <- read_apsimx(system.file("wheat.apsimx", package = "rapsimng"))
+#' wheat <- read_apsimx(system.file("extdata/wheat.apsimx", package = "rapsimng"))
 #' permutation <- search_path(wheat, path = "[Factors].Permutation")
 #' permutation_new <- keep_simulations(permutation$node, list(V = "2"))
 #' get_simulations(permutation_new)
@@ -127,7 +127,7 @@ get_simulations <- function(l) {
 #'                                     list(V = "1", Cv = c("Axe", "Bolac")))
 #' get_simulations(permutation_new)
 keep_simulations <- function(l, s) {
-  if (class(s) != "list") {
+  if (!methods::is(s, "list")) {
     stop("s requires as a list")
   }
 
@@ -162,7 +162,7 @@ keep_simulations <- function(l, s) {
 #' @export
 #'
 #' @examples
-#' wheat <- read_apsimx(system.file("wheat.apsimx", package = "rapsimng"))
+#' wheat <- read_apsimx(system.file("extdata/wheat.apsimx", package = "rapsimng"))
 #' exp <- search_path(wheat, path = "[Experiment]")
 #' get_metfile(exp)
 get_metfile <- function(l, is_stop = TRUE) {

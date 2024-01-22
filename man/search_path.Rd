@@ -4,12 +4,14 @@
 \alias{search_path}
 \title{Find a model in the apsimx file using specified path}
 \usage{
-search_path(l, path)
+search_path(l, path, case_insensitive = TRUE)
 }
 \arguments{
 \item{l}{the list of apsimx file}
 
 \item{path}{The specified path (See details)}
+
+\item{case_insensitive}{Whether case sensitive}
 }
 \value{
 The list for the specified path.
@@ -37,7 +39,7 @@ that has the name 'Soil' that is in scope
 }
 
 \examples{
-wheat <- read_apsimx(system.file("Wheat.json", package = "rapsimng"))
+wheat <- read_apsimx(system.file("extdata/Wheat.json", package = "rapsimng"))
 # Return empty list if not found
 search_path(wheat, "[Simulations1]")
 # Search root path

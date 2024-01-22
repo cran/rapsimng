@@ -10,7 +10,7 @@ suppressPackageStartupMessages(library(magrittr))
 
 ## ----read-apsimx--------------------------------------------------------------
 library(rapsimng)
-wheat <- read_apsimx(system.file("Wheat.json", package = "rapsimng"))
+wheat <- read_apsimx(system.file("extdata/Wheat.json", package = "rapsimng"))
 #wheat <- read_apsimx("inst/Wheat.json")
 
 ## -----------------------------------------------------------------------------
@@ -43,7 +43,7 @@ new_cultivar$Command <- list(
 
 ## -----------------------------------------------------------------------------
 # Read the apsimx file
-wheat <- read_apsimx(system.file("wheat.apsimx", package = "rapsimng"))
+wheat <- read_apsimx(system.file("extdata/wheat.apsimx", package = "rapsimng"))
 # Create a new Replacements
 replacements <- new_model("Core.Replacements")
 # Insert the replacements into root folder
@@ -65,7 +65,7 @@ cultivar_node$node$Command
 head(data.frame(model = available_models()))
 
 ## -----------------------------------------------------------------------------
-wheat <- read_apsimx(system.file("wheat.apsimx", package = "rapsimng"))
+wheat <- read_apsimx(system.file("extdata/wheat.apsimx", package = "rapsimng"))
 # Update cultivars
 df <- data.frame(name = rep("Hartog", 3),
                   parameter = c("[Phenology].MinimumLeafNumber.FixedValue",

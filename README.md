@@ -1,7 +1,6 @@
 # rapsimng
 [![](https://www.r-pkg.org/badges/version/rapsimng?color=green)](https://cran.r-project.org/package=rapsimng)
 ![R-CMD-check](https://github.com/byzheng/rapsimng/workflows/R-CMD-check/badge.svg) 
-[![codecov](https://codecov.io/gh/byzheng/RApsimNG/branch/master/graph/badge.svg)](https://codecov.io/gh/byzheng/RApsimNG)
 
 [![](http://cranlogs.r-pkg.org/badges/grand-total/rapsimng?color=green)](https://cran.r-project.org/package=rapsimng)
 [![](http://cranlogs.r-pkg.org/badges/last-month/rapsimng?color=green)](https://cran.r-project.org/package=rapsimng)
@@ -29,7 +28,7 @@ install.packages('rapsimng')
 Install the developing version from [Github](https://github.com/byzheng/rapsimng).
 
 ```r
-devtools::install_github('byzheng/rapsimng')
+remotes::install_github('byzheng/rapsimng')
 ```
 
 
@@ -40,7 +39,7 @@ The `wheat.apsimx` in the validation dataset of APSIM NG  is used as an example.
 
 ```r
 # Read Wheat.apsimx file with `read_apsimx` which returns a list of json results.
-file <- system.file("wheat.apsimx", package = "rapsimng")
+file <- system.file("extdata/wheat.apsimx", package = "rapsimng")
 m <- read_apsimx(file)
 
 ```
