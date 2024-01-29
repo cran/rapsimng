@@ -1,7 +1,7 @@
 Package: rapsimng
 Type: Package
 Title: APSIM Next Generation
-Version: 0.4.2
+Version: 0.4.3
 Authors@R: person("Bangyou", "Zheng", 
                email = "bangyou.zheng@csiro.au", 
                role = c("aut", "cre"))
@@ -19,8 +19,8 @@ RoxygenNote: 7.3.0
 Suggests: testthat, knitr, rmarkdown, tidyverse, methods
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2024-01-22 00:59:52 UTC; zhe00a
+Packaged: 2024-01-28 23:23:42 UTC; zhe00a
 Author: Bangyou Zheng [aut, cre]
 Maintainer: Bangyou Zheng <bangyou.zheng@csiro.au>
 Repository: CRAN
-Date/Publication: 2024-01-22 04:20:02 UTC
+Date/Publication: 2024-01-29 10:50:02 UTC
