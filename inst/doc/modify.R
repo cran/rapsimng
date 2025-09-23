@@ -1,4 +1,4 @@
-## ---- include = FALSE, warning=FALSE, error=FALSE, message=FALSE--------------
+## ----include = FALSE, warning=FALSE, error=FALSE, message=FALSE---------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"

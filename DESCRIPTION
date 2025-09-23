@@ -1,7 +1,7 @@
 Package: rapsimng
 Type: Package
 Title: APSIM Next Generation
-Version: 0.4.4
+Version: 0.4.5
 Authors@R: person("Bangyou", "Zheng", 
                email = "bangyou.zheng@csiro.au", 
                role = c("aut", "cre"))
@@ -13,14 +13,14 @@ License: MIT + file LICENSE
 URL: https://rapsimng.bangyou.me/, https://github.com/byzheng/rapsimng
 BugReports: https://github.com/byzheng/rapsimng/issues
 Encoding: UTF-8
-Depends: R (>= 3.5.0)
-Imports: jsonlite, tibble, magrittr, dplyr, rlang, DBI, RSQLite
-RoxygenNote: 7.3.0
+Depends: R (>= 4.1.0)
+Imports: jsonlite, tibble, magrittr, dplyr, purrr, rlang, DBI, RSQLite
+RoxygenNote: 7.3.1
 Suggests: testthat, knitr, rmarkdown, tidyverse, methods
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2024-02-01 23:40:35 UTC; zhe00a
+Packaged: 2025-09-22 23:46:39 UTC; zhe00a
 Author: Bangyou Zheng [aut, cre]
 Maintainer: Bangyou Zheng <bangyou.zheng@csiro.au>
 Repository: CRAN
-Date/Publication: 2024-02-02 00:00:02 UTC
+Date/Publication: 2025-09-23 00:00:02 UTC

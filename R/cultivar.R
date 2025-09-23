@@ -89,6 +89,9 @@ get_cultivar <- function(l, alias = TRUE) {
 update_cultivar <- function(l, df, add = TRUE, use_folder = TRUE,
                             cultivar_folder = "Cultivars") {
 
+    stopifnot(is.character(cultivar_folder))
+    stopifnot(length(cultivar_folder) == 1)
+
     if (is.null(df$name)) {
         stop("'name' column is required in the data frame 'df'.")
     }
@@ -160,7 +163,7 @@ update_cultivar <- function(l, df, add = TRUE, use_folder = TRUE,
     i <- 1
     for (i in seq(along = cultivars_name)) {
         df_cultivar <- df[df$name == cultivars_name[i],]
-        commands <- paste0(df_cultivar$parameter, " = ", df_cultivar$value)
+        commands <- as.list(paste0(df_cultivar$parameter, " = ", df_cultivar$value))
         # Search whether the cultivar existing
         cultivar_node <- search_path(l, paste0("[", cultivars_name[i], "]"))
         if (length(cultivar_node) != 0 &&
@@ -197,3 +200,60 @@ update_cultivar <- function(l, df, add = TRUE, use_folder = TRUE,
     }
     l
 }
+
+
+#' Generate new cultivars with parameter which can be used in Replacements
+#'
+#' @param df A data frame for new parameters with three columns, i.e. name, parameter and value.
+#' @param cultivar_folder folder name for cultivars
+#'
+#' @returns An APSIMX list
+#' @export
+#'
+#' @examples
+#' df <- data.frame(name = c("C1", "C1", "C2", "C2"),
+#'      parameter = c("[Phenology].CAMP.FLNparams.MinLN",
+#'               "[Phenology].CAMP.FLNparams.VrnLN",
+#'               "[Phenology].CAMP.FLNparams.MinLN",
+#'               "[Phenology].CAMP.FLNparams.VrnLN"),
+#'      value = c(5, 6, 7, 8))
+#' a <- new_cultivar(df)
+new_cultivar <- function(df,
+                         cultivar_folder = "Cultivars") {
+
+    stopifnot(is.character(cultivar_folder))
+    stopifnot(length(cultivar_folder) == 1)
+
+    if (is.null(df$name)) {
+        stop("'name' column is required in the data frame 'df'.")
+    }
+
+    if (is.null(df$parameter)) {
+        stop("'parameter' column is required in the data frame 'df'.")
+    }
+
+    if (is.null(df$value)) {
+        stop("'value' column is required in the data frame 'df'.")
+    }
+    cultivar_node <- new_model("Core.Folder", cultivar_folder)
+
+    cultivar_path <- search_path(cultivar_node, paste0("[", cultivar_folder, "]"))
+    cultivar_path <- cultivar_path$path
+
+    cultivars_name <- unique(df$name)
+    i <- 1
+    for (i in seq(along = cultivars_name)) {
+        df_cultivar <- df[df$name == cultivars_name[i],]
+        commands <- as.list(paste0(df_cultivar$parameter, " = ", df_cultivar$value))
+        # Search whether the cultivar existing
+
+        # Create a new one if not existing
+        cultivar_model <- new_model("PMF.Cultivar", cultivars_name[i])
+        cultivar_model$Command <- commands
+        # Insert new model
+        cultivar_node <- insert_model(cultivar_node, cultivar_path,
+                          cultivar_model)
+    }
+    cultivar_node
+}
+
